@@ -1,3 +1,12 @@
+1.1.0
+
+  * Added:
+    * CrT builder for the worktable recipes
+    * Support for non-hammer tools in the CrT worktable recipes
+    * Bone meal particles to indicate recipe progress when banging on a worktable or anvil
+
+---
+
 1.0.6
 
   * Added:
@@ -12,11 +21,6 @@
 ---
 
 1.0.5
-
-  * Added:
-    * CrT builder for the worktable recipes
-    * Support for non-hammer tools in the CrT worktable recipes
-    * Bone meal particles to indicate recipe progress when banging on a worktable or anvil
 
   * Fixed:
     * Recipe left in worktable doesn't work after logging out and back in
