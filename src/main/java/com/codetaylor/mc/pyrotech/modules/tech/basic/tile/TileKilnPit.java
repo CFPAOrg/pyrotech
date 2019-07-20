@@ -17,6 +17,7 @@ import com.codetaylor.mc.pyrotech.interaction.spi.IInteraction;
 import com.codetaylor.mc.pyrotech.interaction.spi.ITileInteractable;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionItemStack;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionUseItemBase;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.library.spi.tile.TileBurnableBase;
 import com.codetaylor.mc.pyrotech.library.util.Util;
 import com.codetaylor.mc.pyrotech.modules.core.ModuleCore;
@@ -197,7 +198,7 @@ public class TileKilnPit
       KilnPitRecipe recipe = KilnPitRecipe.getRecipe(itemStack);
 
       if (recipe != null) {
-        int burnTimeTicks = Math.max(1, recipe.getTimeTicks());
+        int burnTimeTicks = (int) Math.max(1, recipe.getTimeTicks() * ModuleTechBasicConfig.PIT_KILN.BASE_RECIPE_DURATION_MODIFIER);
         this.setTotalBurnTimeTicks(burnTimeTicks);
       }
     }
@@ -508,6 +509,13 @@ public class TileKilnPit
   // ---------------------------------------------------------------------------
   // - Interaction
   // ---------------------------------------------------------------------------
+
+  @Nullable
+  @Override
+  public Stages getStages() {
+
+    return ModuleTechBasicConfig.STAGES_PIT_KILN;
+  }
 
   @Override
   public IInteraction[] getInteractions() {

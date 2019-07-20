@@ -3,8 +3,11 @@ package com.codetaylor.mc.pyrotech.modules.tech.machine.tile;
 import com.codetaylor.mc.athenaeum.network.tile.data.TileDataFloat;
 import com.codetaylor.mc.athenaeum.network.tile.spi.ITileData;
 import com.codetaylor.mc.athenaeum.util.Properties;
-import com.codetaylor.mc.pyrotech.library.spi.tile.ITileAirFlowHandler;
+import com.codetaylor.mc.pyrotech.IAirflowConsumerCapability;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.library.spi.tile.TileNetBase;
+import com.codetaylor.mc.pyrotech.modules.core.ModuleCore;
+import com.codetaylor.mc.pyrotech.modules.core.plugin.gamestages.GameStages;
 import com.codetaylor.mc.pyrotech.modules.tech.machine.ModuleTechMachine;
 import com.codetaylor.mc.pyrotech.modules.tech.machine.ModuleTechMachineConfig;
 import net.minecraft.block.state.IBlockState;
@@ -17,6 +20,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -112,8 +116,13 @@ public class TileBellows
           this.progress.set(1);
         }
 
-        for (BlockPos blockPos : this.getAirflowPushPositions(new ArrayList<>(3))) {
-          this.pushAirflow(blockPos);
+        List<BlockPos> airflowPushPositions = this.getAirflowPushPositions(new ArrayList<>(3));
+        List<EnumFacing> airflowPushFacings = this.getAirflowPushFacings(new ArrayList<>(3));
+
+        for (int i = 0; i < airflowPushPositions.size(); i++) {
+          BlockPos blockPos = airflowPushPositions.get(i);
+          EnumFacing facing = (i >= airflowPushFacings.size()) ? EnumFacing.NORTH : airflowPushFacings.get(i);
+          this.pushAirflow(blockPos, facing);
         }
       }
 
@@ -137,18 +146,28 @@ public class TileBellows
     }
   }
 
-  protected void pushAirflow(BlockPos blockPos) {
+  protected void pushAirflow(BlockPos blockPos, EnumFacing facing) {
 
     TileEntity tileEntity = this.world.getTileEntity(blockPos);
 
-    if (tileEntity instanceof ITileAirFlowHandler) {
-      ((ITileAirFlowHandler) tileEntity).pushAirflow(this.getAirflow());
+    if (tileEntity != null) {
+      IAirflowConsumerCapability airflowConsumer = tileEntity.getCapability(ModuleCore.CAPABILITY_AIRFLOW_CONSUMER, facing.getOpposite());
+
+      if (airflowConsumer != null) {
+        airflowConsumer.consumeAirflow(this.getAirflow(), false);
+      }
     }
   }
 
   protected List<BlockPos> getAirflowPushPositions(List<BlockPos> result) {
 
     result.add(this.pos.offset(this.getFacing()));
+    return result;
+  }
+
+  protected List<EnumFacing> getAirflowPushFacings(List<EnumFacing> result) {
+
+    result.add(this.getFacing());
     return result;
   }
 
@@ -181,12 +200,22 @@ public class TileBellows
 
         if (entity instanceof EntityPlayer
             && entity.posY - 0.05 < bellowsHeight) {
+
+          if (Loader.isModLoaded("gamestages")) {
+            return GameStages.allowed((EntityPlayer) entity, this.getStages());
+          }
+
           return true;
         }
       }
     }
 
     return false;
+  }
+
+  private Stages getStages() {
+
+    return ModuleTechMachineConfig.STAGES_BELLOWS;
   }
 
   // ---------------------------------------------------------------------------

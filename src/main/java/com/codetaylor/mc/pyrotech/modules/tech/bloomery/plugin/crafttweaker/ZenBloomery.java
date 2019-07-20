@@ -6,8 +6,10 @@ import com.codetaylor.mc.athenaeum.tools.ZenDocArg;
 import com.codetaylor.mc.athenaeum.tools.ZenDocClass;
 import com.codetaylor.mc.athenaeum.tools.ZenDocMethod;
 import com.codetaylor.mc.pyrotech.library.crafttweaker.RemoveAllRecipesAction;
+import com.codetaylor.mc.pyrotech.modules.core.plugin.crafttweaker.ZenStages;
 import com.codetaylor.mc.pyrotech.modules.tech.basic.recipe.AnvilRecipe;
 import com.codetaylor.mc.pyrotech.modules.tech.bloomery.ModuleTechBloomery;
+import com.codetaylor.mc.pyrotech.modules.tech.bloomery.ModuleTechBloomeryConfig;
 import com.codetaylor.mc.pyrotech.modules.tech.bloomery.recipe.*;
 import crafttweaker.IAction;
 import crafttweaker.api.item.IIngredient;
@@ -16,6 +18,7 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.CraftTweaker;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -134,6 +137,87 @@ public class ZenBloomery {
         ),
         EnumRecipeType.WitherForge
     );
+  }
+
+  @ZenDocMethod(
+      order = 5,
+      args = {
+          @ZenDocArg(arg = "fuel"),
+          @ZenDocArg(arg = "modifier")
+      }
+  )
+  @ZenMethod
+  public static void addBloomeryFuelModifier(IIngredient fuel, double modifier) {
+
+    ModuleTechBloomeryConfig.BLOOMERY_FUEL_MODIFIERS.add(
+        new Tuple<>(
+            CTInputHelper.toIngredient(fuel),
+            modifier
+        )
+    );
+  }
+
+  @ZenDocMethod(
+      order = 6,
+      args = {
+          @ZenDocArg(arg = "fuel"),
+          @ZenDocArg(arg = "modifier")
+      }
+  )
+  @ZenMethod
+  public static void addWitherForgeFuelModifier(IIngredient fuel, double modifier) {
+
+    ModuleTechBloomeryConfig.WITHER_FORGE_FUEL_MODIFIERS.add(
+        new Tuple<>(
+            CTInputHelper.toIngredient(fuel),
+            modifier
+        )
+    );
+  }
+
+  @ZenDocMethod(
+      order = 7,
+      args = {
+          @ZenDocArg(arg = "stages", info = "game stages")
+      },
+      description = {
+          "Sets game stage logic required to use the bloom."
+      }
+  )
+  @ZenMethod
+  public static void setBloomGameStages(ZenStages stages) {
+
+    ModuleTechBloomeryConfig.STAGES_BLOOM = stages.getStages();
+  }
+
+  @ZenDocMethod(
+      order = 8,
+      args = {
+          @ZenDocArg(arg = "stages", info = "game stages")
+      },
+      description = {
+          "Sets game stage logic required to use the bloomery."
+      }
+  )
+  @ZenMethod
+  public static void setBloomeryGameStages(ZenStages stages) {
+
+    ModuleTechBloomeryConfig.STAGES_BLOOMERY = stages.getStages();
+  }
+
+  @ZenDocMethod(
+      order = 9,
+      args = {
+          @ZenDocArg(arg = "stages", info = "game stages")
+      },
+      description = {
+          "Sets game stage logic required to use the wither forge."
+      }
+  )
+  @ZenMethod
+  public static void setWitherForgeGameStages(ZenStages stages) {
+
+    ModuleTechBloomeryConfig.STAGES_WITHER_FORGE = stages.getStages();
   }
 
   public static class RemoveRecipe

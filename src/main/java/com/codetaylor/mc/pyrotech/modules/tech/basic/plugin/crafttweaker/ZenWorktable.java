@@ -2,7 +2,9 @@ package com.codetaylor.mc.pyrotech.modules.tech.basic.plugin.crafttweaker;
 
 import com.codetaylor.mc.athenaeum.integration.crafttweaker.mtlib.helpers.CTInputHelper;
 import com.codetaylor.mc.athenaeum.tools.*;
+import com.codetaylor.mc.pyrotech.modules.core.plugin.crafttweaker.ZenStages;
 import com.codetaylor.mc.pyrotech.modules.tech.basic.ModuleTechBasic;
+import com.codetaylor.mc.pyrotech.modules.tech.basic.ModuleTechBasicConfig;
 import com.codetaylor.mc.pyrotech.modules.tech.basic.recipe.WorktableRecipe;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
@@ -390,6 +392,36 @@ public class ZenWorktable {
   public static void removeRecipes(IIngredient output) {
 
     CraftTweaker.LATE_ACTIONS.add(new RemoveRecipe(CraftTweakerMC.getIngredient(output)));
+  }
+
+  @ZenDocMethod(
+      order = 9,
+      args = {
+          @ZenDocArg(arg = "stages", info = "game stages")
+      },
+      description = {
+          "Sets game stage logic required to use the worktable."
+      }
+  )
+  @ZenMethod
+  public static void setGameStages(ZenStages stages) {
+
+    ModuleTechBasicConfig.STAGES_WORKTABLE = stages.getStages();
+  }
+
+  @ZenDocMethod(
+      order = 10,
+      args = {
+          @ZenDocArg(arg = "stages", info = "game stages")
+      },
+      description = {
+          "Sets game stage logic required to use the stone worktable."
+      }
+  )
+  @ZenMethod
+  public static void setStoneGameStages(ZenStages stages) {
+
+    ModuleTechBasicConfig.STAGES_WORKTABLE_STONE = stages.getStages();
   }
 
   public static class RemoveRecipe

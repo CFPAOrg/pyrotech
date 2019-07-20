@@ -3,15 +3,35 @@ package com.codetaylor.mc.pyrotech.modules.tech.bloomery;
 import com.codetaylor.mc.athenaeum.parser.recipe.item.MalformedRecipeItemException;
 import com.codetaylor.mc.athenaeum.parser.recipe.item.ParseResult;
 import com.codetaylor.mc.athenaeum.parser.recipe.item.RecipeItemParser;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.common.config.Config;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Config(modid = ModuleTechBloomery.MOD_ID, name = ModuleTechBloomery.MOD_ID + "/" + "module.tech.Bloomery")
 public class ModuleTechBloomeryConfig {
+
+  @Config.Ignore
+  public static final List<Tuple<Ingredient, Double>> BLOOMERY_FUEL_MODIFIERS = new ArrayList<>(1);
+
+  @Config.Ignore
+  public static final List<Tuple<Ingredient, Double>> WITHER_FORGE_FUEL_MODIFIERS = new ArrayList<>(1);
+
+  @Config.Ignore
+  public static Stages STAGES_BLOOM = null;
+
+  @Config.Ignore
+  public static Stages STAGES_BLOOMERY = null;
+
+  @Config.Ignore
+  public static Stages STAGES_WITHER_FORGE = null;
 
   // ---------------------------------------------------------------------------
   // - Slag
@@ -140,6 +160,18 @@ public class ModuleTechBloomeryConfig {
     }};
 
     public double getSpecialFuelBurnTimeModifier(ItemStack stack) {
+
+      // Check the tuple list first
+
+      for (Tuple<Ingredient, Double> modifier : BLOOMERY_FUEL_MODIFIERS) {
+        Ingredient ingredient = modifier.getFirst();
+
+        if (ingredient.apply(stack)) {
+          return modifier.getSecond();
+        }
+      }
+
+      // Next, check config values
 
       ResourceLocation registryName = stack.getItem().getRegistryName();
 
@@ -281,6 +313,18 @@ public class ModuleTechBloomeryConfig {
     }};
 
     public double getSpecialFuelBurnTimeModifier(ItemStack stack) {
+
+      // Check the tuple list first
+
+      for (Tuple<Ingredient, Double> modifier : WITHER_FORGE_FUEL_MODIFIERS) {
+        Ingredient ingredient = modifier.getFirst();
+
+        if (ingredient.apply(stack)) {
+          return modifier.getSecond();
+        }
+      }
+
+      // Next, check config values
 
       ResourceLocation registryName = stack.getItem().getRegistryName();
 

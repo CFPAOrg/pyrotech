@@ -1,12 +1,58 @@
 package com.codetaylor.mc.pyrotech.modules.tech.basic;
 
 import com.codetaylor.mc.athenaeum.util.ArrayHelper;
+import com.codetaylor.mc.athenaeum.util.OreDictHelper;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.modules.core.ModuleCoreConfig;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Config(modid = ModuleTechBasic.MOD_ID, name = ModuleTechBasic.MOD_ID + "/" + "module.tech.Basic")
 public class ModuleTechBasicConfig {
+
+  @Config.Ignore
+  public static final List<Ingredient> CAMPFIRE_FUEL_WHITELIST = new ArrayList<>(1);
+
+  @Config.Ignore
+  public static final List<Ingredient> CAMPFIRE_FUEL_BLACKLIST = new ArrayList<>(1);
+
+  @Config.Ignore
+  public static Stages STAGES_WORKTABLE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_WORKTABLE_STONE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_SOAKING_POT = null;
+
+  @Config.Ignore
+  public static Stages STAGES_PIT_KILN = null;
+
+  @Config.Ignore
+  public static Stages STAGES_DRYING_RACK_CRUDE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_DRYING_RACK = null;
+
+  @Config.Ignore
+  public static Stages STAGES_COMPACTING_BIN = null;
+
+  @Config.Ignore
+  public static Stages STAGES_CHOPPING_BLOCK = null;
+
+  @Config.Ignore
+  public static Stages STAGES_CAMPFIRE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_ANVIL_IRONCLAD = null;
+
+  @Config.Ignore
+  public static Stages STAGES_ANVIL_GRANITE = null;
 
   // ---------------------------------------------------------------------------
   // - Worktable Common
@@ -328,6 +374,14 @@ public class ModuleTechBasicConfig {
         "Default: " + true
     })
     public boolean HOLDS_HOT_FLUIDS = false;
+
+    @Config.Comment({
+        "Multiplicative modifier applied to every recipe in this device.",
+        "recipeDurationTicks = recipeDurationTicks * BASE_RECIPE_DURATION_MODIFIER",
+        "Default: " + 1
+    })
+    @Config.RangeDouble(min = 0)
+    public double BASE_RECIPE_DURATION_MODIFIER = 1;
   }
 
   // ---------------------------------------------------------------------------
@@ -656,6 +710,14 @@ public class ModuleTechBasicConfig {
     })
     @Config.RangeDouble
     public double SPEED_MODIFIER = 1.0;
+
+    @Config.Comment({
+        "Multiplicative modifier applied to every recipe in this device.",
+        "recipeDurationTicks = recipeDurationTicks * BASE_RECIPE_DURATION_MODIFIER",
+        "Default: " + 1
+    })
+    @Config.RangeDouble(min = 0)
+    public double BASE_RECIPE_DURATION_MODIFIER = 1;
   }
 
   // ---------------------------------------------------------------------------
@@ -685,6 +747,14 @@ public class ModuleTechBasicConfig {
     })
     @Config.RangeDouble(min = 0)
     public double INHERITED_CRUDE_DRYING_RACK_RECIPE_DURATION_MODIFIER = 1.0;
+
+    @Config.Comment({
+        "Multiplicative modifier applied to every recipe in this device.",
+        "recipeDurationTicks = recipeDurationTicks * BASE_RECIPE_DURATION_MODIFIER",
+        "Default: " + 1
+    })
+    @Config.RangeDouble(min = 0)
+    public double BASE_RECIPE_DURATION_MODIFIER = 1;
   }
 
   // ---------------------------------------------------------------------------
@@ -701,6 +771,14 @@ public class ModuleTechBasicConfig {
     })
     @Config.RangeInt(min = 1, max = 64)
     public int MAX_STACK_SIZE = 8;
+
+    @Config.Comment({
+        "Multiplicative modifier applied to every recipe in this device.",
+        "recipeDurationTicks = recipeDurationTicks * BASE_RECIPE_DURATION_MODIFIER",
+        "Default: " + 1
+    })
+    @Config.RangeDouble(min = 0)
+    public double BASE_RECIPE_DURATION_MODIFIER = 1;
   }
 
   // ---------------------------------------------------------------------------
@@ -790,6 +868,43 @@ public class ModuleTechBasicConfig {
     })
     @Config.RangeDouble(min = 0)
     public double ENTITY_WALK_BURN_DAMAGE = 1.0;
+
+    @Config.Comment({
+        "If true, all 'logWood' items will be valid fuel for the campfire.",
+        "Default: " + true
+    })
+    public boolean USE_LOG_WOOD_OREDICT = true;
+
+    public boolean isValidFuel(ItemStack fuel) {
+
+      if (this.USE_LOG_WOOD_OREDICT
+          && OreDictHelper.contains("logWood", fuel)
+          && this.isNotBlacklistedFuel(fuel)) {
+        return true;
+      }
+
+      // search custom additions
+      for (Ingredient ingredient : ModuleTechBasicConfig.CAMPFIRE_FUEL_WHITELIST) {
+
+        if (ingredient.apply(fuel)) {
+          return this.isNotBlacklistedFuel(fuel);
+        }
+      }
+
+      return false;
+    }
+
+    private boolean isNotBlacklistedFuel(ItemStack fuel) {
+
+      for (Ingredient ingredient : ModuleTechBasicConfig.CAMPFIRE_FUEL_BLACKLIST) {
+
+        if (ingredient.apply(fuel)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
   }
 
 }

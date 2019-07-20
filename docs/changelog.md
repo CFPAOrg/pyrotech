@@ -1,3 +1,106 @@
+1.2.7
+
+  * Fixed:
+      * Worktable whitelist / blacklist doesn't work [(#125)](https://github.com/codetaylor/pyrotech/issues/125)
+
+---
+
+1.2.6
+
+  * Fixed:
+      * ArrayIndexOutOfBoundsException when using a whitelisted non-axe tool with the chopping block [(#124)](https://github.com/codetaylor/pyrotech/issues/124)
+
+---
+
+1.2.5
+
+  * Fixed:
+      * ZenScript method to whitelist campfire fuel doesn't work [(#121)](https://github.com/codetaylor/pyrotech/issues/121)
+
+---
+
+1.2.4
+
+  * Note:
+      * Any Stone Igniter or Refractory Igniter currently in the world will be inert after this update. They will need to be broken and replaced in order to function.
+
+  * Fixed:
+      * Crash when using igniter blocks [(#107)](https://github.com/codetaylor/pyrotech/issues/107)
+
+---
+
+1.2.3
+
+  * Fixed:
+      * Unfired Clay Shears should not work as shears with 238 durability [(#100)](https://github.com/codetaylor/pyrotech/issues/100)
+
+---
+
+1.2.2
+
+  * Note:
+    * Remove the leading `.` from Pyrotech's config files
+    * Thermal Expansion sawmill may be missing plank recipes, please read about solutions here: [https://pyrotech.readthedocs.io/en/latest/knownissues/](https://pyrotech.readthedocs.io/en/latest/knownissues/)
+
+  * Fixed:
+    * Config files prefixed with `.` are not correctly imported by the Twitch app (#96)
+    * Removed vanilla crafting recipes still showing up in JEI (#97)
+
+  * Changed:
+    * All config files that were previously prefixed with `.` have had the `.` removed
+    * Pyrotech once again removes recipes during post-init, pre-CrT
+
+---
+
+1.2.1
+
+  * Fixed:
+    * Missing config option to disable stick drops from leaves: `DROP_STICKS_FROM_LEAVES` in the `TWEAKS` section of `.core.cfg`
+
+---
+
+1.2.0
+
+  * Note:
+    * Bugs: A lot of code has been touched in this release - thank you for your continued bug reports!
+    * The default oredict entries have changed, please refresh your `config/pyrotech/.core.OreDict-Custom.json` file
+    * It is safe to delete the `B:leaves` entry from the `config/pyrotech/plugin.Dropt.cfg` file
+
+  * API:
+    * Added `IAirflowConsumerCapability`
+    * Bumped version to 1
+
+  * Added:
+    * Config options to modify base recipe duration for (#70): Pit Kiln, Crude / Drying Rack, Soaking Pot, Pit / Refractory Burn
+    * ZS methods to assign Bloomery and Wither Forge fuel modifiers (#56)
+    * ZS methods to white / blacklist campfire fuels (#63)
+    * Config option to disable using any `logWood` as campfire fuel (#63)
+    * Pyrotech and Vanilla axes (sans wood) have been added to the oredict `toolAxe` with a wildcard damage value
+    * ZS methods to restrict device interaction with gamestages for (#4): Worktable / Stone Worktable, Soaking Pot, Pit Kiln, Crude Drying Rack / Drying Rack, Compacting Bin, Chopping Block, Campfire, Granite Anvil / Ironclad Anvil, Bloom, Bloomery, Wither Forge, Stone / Refractory Machines, Mechanical Hopper, Mechanical Bellows, Mechanical Mulcher, Bellows, Stone / Brick Tank, Wood Rack, Simple / Durable Rock Bag, Crate / Durable Crate, Shelf / Durable Shelf, Stash / Durable Stash
+    * Sticks will now attempt to drop from any block with an entry in the `treeLeaves` oredict (#69 giggity)
+
+  * Changed:
+    * The Chopping Block recipe will now accept any axe with a `toolAxe` oredict entry
+    * The Chopping Block recipe will now damage the input axe instead of consuming the entire axe
+    * The vanilla recipe removal has been delayed until the load complete event to allow time for other mods, such as TE, to generate recipes
+    * Dropt is no longer in charge of the leaf / stick drops
+    * The Stone / Refractory Crucible will now only accept a total number of input items for which it has the output capacity (#25)
+    * The Soaking Pot will now only accept a total number of input items for which it has fluid to process (#25)
+
+---
+
+1.1.7
+
+  * Fixed:
+    * Mulched Farmland should not sound like stone (#90)
+    * Templates of refractory machines showing wrong machine tooltip (#89)
+    * Crash when using Tongs (#88)
+
+  * Changed:
+    * Updated zh_cn.lang (#87 Snownee)
+
+---
+
 1.1.6
 
   * Fixed:

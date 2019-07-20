@@ -8,11 +8,15 @@ import com.codetaylor.mc.athenaeum.network.tile.data.TileDataItemStackHandler;
 import com.codetaylor.mc.athenaeum.network.tile.spi.ITileData;
 import com.codetaylor.mc.athenaeum.network.tile.spi.ITileDataItemStackHandler;
 import com.codetaylor.mc.athenaeum.network.tile.spi.TileDataBase;
-import com.codetaylor.mc.athenaeum.util.*;
+import com.codetaylor.mc.athenaeum.util.BlockHelper;
+import com.codetaylor.mc.athenaeum.util.SoundHelper;
+import com.codetaylor.mc.athenaeum.util.StackHelper;
+import com.codetaylor.mc.athenaeum.util.TickCounter;
 import com.codetaylor.mc.pyrotech.interaction.api.InteractionBounds;
 import com.codetaylor.mc.pyrotech.interaction.api.Transform;
 import com.codetaylor.mc.pyrotech.interaction.spi.*;
 import com.codetaylor.mc.pyrotech.library.InteractionUseItemToActivateWorker;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.library.spi.tile.TileCombustionWorkerBase;
 import com.codetaylor.mc.pyrotech.modules.core.ModuleCore;
 import com.codetaylor.mc.pyrotech.modules.core.ModuleCoreConfig;
@@ -562,6 +566,13 @@ public class TileCampfire
   // - Interaction
   // ---------------------------------------------------------------------------
 
+  @Nullable
+  @Override
+  public Stages getStages() {
+
+    return ModuleTechBasicConfig.STAGES_CAMPFIRE;
+  }
+
   @Override
   public IInteraction[] getInteractions() {
 
@@ -724,7 +735,7 @@ public class TileCampfire
 
     private boolean doItemStackValidation(ItemStack itemStack) {
 
-      return OreDictHelper.contains("logWood", itemStack);
+      return ModuleTechBasicConfig.CAMPFIRE.isValidFuel(itemStack);
     }
 
     @Override
@@ -911,7 +922,7 @@ public class TileCampfire
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 
-      if (!OreDictHelper.contains("logWood", stack)) {
+      if (!ModuleTechBasicConfig.CAMPFIRE.isValidFuel(stack)) {
         return stack;
       }
 

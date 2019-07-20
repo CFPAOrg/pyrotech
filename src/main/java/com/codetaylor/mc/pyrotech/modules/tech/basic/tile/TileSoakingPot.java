@@ -16,6 +16,7 @@ import com.codetaylor.mc.pyrotech.interaction.spi.IInteraction;
 import com.codetaylor.mc.pyrotech.interaction.spi.ITileInteractable;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionBucketBase;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionItemStack;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.library.spi.tile.TileNetBase;
 import com.codetaylor.mc.pyrotech.modules.tech.basic.ModuleTechBasic;
 import com.codetaylor.mc.pyrotech.modules.tech.basic.ModuleTechBasicConfig;
@@ -236,7 +237,8 @@ public class TileSoakingPot
 
     if (this.currentRecipe != null) {
 
-      float increment = 1.0f / this.currentRecipe.getTimeTicks();
+      int timeTicks = (int) Math.max(1, this.currentRecipe.getTimeTicks() * ModuleTechBasicConfig.SOAKING_POT.BASE_RECIPE_DURATION_MODIFIER);
+      float increment = 1.0f / timeTicks;
 
       ItemStack itemStack = this.inputStackHandler.getStackInSlot(0);
       int maxDrain = this.currentRecipe.getInputFluid().amount * itemStack.getCount();
@@ -296,6 +298,13 @@ public class TileSoakingPot
   // - Interactions
   // ---------------------------------------------------------------------------
 
+  @Nullable
+  @Override
+  public Stages getStages() {
+
+    return ModuleTechBasicConfig.STAGES_SOAKING_POT;
+  }
+
   @Override
   public boolean shouldRenderInPass(int pass) {
 
@@ -329,6 +338,10 @@ public class TileSoakingPot
       FluidStack fluid = this.tile.inputFluidTank.getFluid();
 
       if (fluid == null) {
+        return false;
+      }
+
+      if (this.tile.inputStackHandler.insertItem(0, itemStack, true).getCount() == itemStack.getCount()) {
         return false;
       }
 
@@ -387,13 +400,63 @@ public class TileSoakingPot
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 
-      if (!this.outputStackHandler.getStackInSlot(0).isEmpty()
-          || this.inputFluidTank.getFluid() == null
-          || this.inputFluidTank.getFluid().amount == 0) {
+      if (!this.outputStackHandler.getStackInSlot(0).isEmpty()) {
         return stack;
       }
 
-      return super.insertItem(slot, stack, simulate);
+      FluidStack fluid = this.inputFluidTank.getFluid();
+
+      if (fluid == null
+          || fluid.amount == 0) {
+        return stack;
+      }
+
+      SoakingPotRecipe recipe = SoakingPotRecipe.getRecipe(stack, fluid);
+
+      if (recipe == null) {
+        return stack;
+      }
+
+      // Don't accept more items than there is fluid required to process them.
+
+      int requiredFluidPerItem = recipe.getInputFluid().amount;
+      int existingItemCount = this.getStackInSlot(0).getCount();
+
+      if (fluid.amount < requiredFluidPerItem * existingItemCount) {
+        return stack;
+      }
+
+      ItemStack remainingItems = super.insertItem(slot, stack, true);
+
+      if (remainingItems.getCount() == stack.getCount()) {
+        return stack;
+      }
+
+      int maxInsertQuantity = stack.getCount() - remainingItems.getCount();
+      int actualInsertQuantity = 0;
+
+      for (int i = 0; i < maxInsertQuantity; i++) {
+
+        if (fluid.amount >= requiredFluidPerItem * (existingItemCount + i + 1)) {
+          actualInsertQuantity += 1;
+
+        } else {
+          break;
+        }
+      }
+
+      if (actualInsertQuantity == 0) {
+        return stack;
+
+      } else {
+        ItemStack toInsert = stack.copy();
+        toInsert.setCount(actualInsertQuantity);
+        super.insertItem(slot, toInsert, simulate);
+
+        ItemStack result = stack.copy();
+        result.setCount(stack.getCount() - actualInsertQuantity);
+        return result;
+      }
     }
   }
 

@@ -13,6 +13,7 @@ import com.codetaylor.mc.pyrotech.interaction.spi.IInteraction;
 import com.codetaylor.mc.pyrotech.interaction.spi.ITileInteractable;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionItemStack;
 import com.codetaylor.mc.pyrotech.interaction.spi.InteractionUseItemBase;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.library.spi.tile.TileNetBase;
 import com.codetaylor.mc.pyrotech.library.util.Util;
 import com.codetaylor.mc.pyrotech.modules.core.ModuleCore;
@@ -235,6 +236,13 @@ public class TileChoppingBlock
   // - Interactions
   // ---------------------------------------------------------------------------
 
+  @Nullable
+  @Override
+  public Stages getStages() {
+
+    return ModuleTechBasicConfig.STAGES_CHOPPING_BLOCK;
+  }
+
   @Override
   public IInteraction[] getInteractions() {
 
@@ -446,6 +454,10 @@ public class TileChoppingBlock
 
         ItemStack heldItem = player.getHeldItem(hand);
         int harvestLevel = heldItem.getItem().getHarvestLevel(heldItem, "axe", player, null);
+
+        if (harvestLevel < 0) {
+          harvestLevel = 0;
+        }
 
         ItemStackHandler stackHandler = tile.getStackHandler();
         ItemStack itemStack = stackHandler.getStackInSlot(0);

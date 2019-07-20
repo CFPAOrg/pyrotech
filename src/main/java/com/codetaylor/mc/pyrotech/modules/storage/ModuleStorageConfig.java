@@ -1,6 +1,7 @@
 package com.codetaylor.mc.pyrotech.modules.storage;
 
 import com.codetaylor.mc.athenaeum.util.ArrayHelper;
+import com.codetaylor.mc.pyrotech.library.Stages;
 import com.codetaylor.mc.pyrotech.modules.core.block.BlockCobblestone;
 import com.codetaylor.mc.pyrotech.modules.core.block.BlockRock;
 import com.codetaylor.mc.pyrotech.modules.core.block.BlockRockGrass;
@@ -8,6 +9,39 @@ import net.minecraftforge.common.config.Config;
 
 @Config(modid = ModuleStorage.MOD_ID, name = ModuleStorage.MOD_ID + "/" + "module.Storage")
 public class ModuleStorageConfig {
+
+  @Config.Ignore
+  public static Stages STAGES_DURABLE_ROCK_BAG = null;
+
+  @Config.Ignore
+  public static Stages STAGES_SIMPLE_ROCK_BAG = null;
+
+  @Config.Ignore
+  public static Stages STAGES_BRICK_TANK = null;
+
+  @Config.Ignore
+  public static Stages STAGES_STONE_TANK = null;
+
+  @Config.Ignore
+  public static Stages STAGES_WOOD_RACK = null;
+
+  @Config.Ignore
+  public static Stages STAGES_CRATE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_DURABLE_CRATE = null;
+
+  @Config.Ignore
+  public static Stages STAGES_SHELF = null;
+
+  @Config.Ignore
+  public static Stages STAGES_DURABLE_SHELF = null;
+
+  @Config.Ignore
+  public static Stages STAGES_STASH = null;
+
+  @Config.Ignore
+  public static Stages STAGES_DURABLE_STASH = null;
 
   // ---------------------------------------------------------------------------
   // - Simple Rock Bag
